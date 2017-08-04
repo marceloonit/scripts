@@ -30,6 +30,8 @@ if [[ ${mgmnt_tools,,} == "y" ]]; then
 EOF
 fi
 
+
+
 ########## CONFIG PROXY ##########
 # Set docker to work under proxy
 read -p "Would you like to configure docker to work under proxy? (y/N):" set_proxy
