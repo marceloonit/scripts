@@ -1,26 +1,32 @@
 #!/bin/bash
 
-## SCRIPT TO BE RUN IN A CENT OS 7 ENVIRONMENT ##
-# This script intended to be a little help to people who want to automatize the installation
-# of a basic Docker server.
+## SCRIPT TO BE RUN IN A CENTOS 7 ENVIRONMENT ##
+# This script is intended to be a little help to people who want to automatize the installation
+# of a basic Docker server for a developpment environment!!
 
-#yum update -y
-#yum install -y docker
+## update system and install docker
+yum update -y
+yum install -y docker
 
+
+## configs for developpment environment
 echo -e '***** PLEASE, PAY ATTENTION, ONLY ANSWER YES IF IT IS A DEVELOPMENT/TEST SERVER ******
 Management tools are very useful in a developemnt environment :D'
 read -p "Install management tools (htop, vim) (y/N)?" mgmnt_tools
 if [[ mgmnt_tools == "" ]]; then
 	mgmnt_tools="n"; fi
 
+## while not right answer, keep loop
 while [[ $mgmnt_tools != "" ]] && [[ ${mgmnt_tools,,} != "y" ]] && [[ ${mgmnt_tools,,} != "n" ]]; do
 	read -p "Please, choose letter 'y' or letter 'n' (y/N):" mgmnt_tools; done
 
+## answer yes, install mgmnt tools
 if [[ ${mgmnt_tools,,} == "y" ]]; then
 	echo "The management tools are being installed ..."
 	yum install -y coreutils
 	yum install -y epel-release
 	yum install -y htop iotop hdparm bonnie++ docker-compose git curl
+
 
 	# Set debug mode for docker daemon
 	cat > /etc/docker/daemon.json << EOF
@@ -91,10 +97,12 @@ EOF
 [Service]
 Environment="HTTP_PROXY=$proxy_protocol://$proxy_address:$proxy_port"
 EOF
+		# flush changes on systemd filesystem
+		systemctl daemon-reload
 	fi
 fi
 
-
+# check if docker service is active, if not, start it!!
 if [ "systemctl is-active docker" == "active" ]
 then
         echo "Starting docker service"
