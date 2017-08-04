@@ -20,7 +20,7 @@ if [[ ${mgmnt_tools,,} == "y" ]]; then
 	echo "The management tools are being installed ..."
 	yum install -y coreutils
 	yum install -y epel-release
-	yum install -y htop iotop hdparm bonnie++ docker-compose
+	yum install -y htop iotop hdparm bonnie++ docker-compose git curl
 
 	# Set debug mode for docker daemon
 	cat > /etc/docker/daemon.json << EOF
