@@ -2,19 +2,28 @@
 
 ## SCRIPT TO BE RUN IN A CENTOS 7 ENVIRONMENT ##
 # This script is intended to be a little help to people who want to automatize the installation
-# of a basic Docker server for a developpment environment!!
+# of a basic Docker server for a developpment environment on top of a brand new CentOS 7 installed!!
+
+echo -e "This script is intended to install end configure some aspects of a Docker Server for development purpose.
+Be aware, this shouldn't be run in a conteiner nor in a production server!!"
+read -p 'Press any key for cancel this installation or "y" to continue ... ' -rsn1 choice
+if [[ ${choice} != "y" ]]; then
+	echo -e "\nExiting the script without doing any modification!"
+	exit 1; fi
+
 
 ## update system and install docker
-yum update -y
-yum install -y docker
+## commented to dev mode
+#yum update -y
+#yum install -y docker docker-compose giit
 
 
-## configs for developpment environment
-echo -e '***** PLEASE, PAY ATTENTION, ONLY ANSWER YES IF IT IS A DEVELOPMENT/TEST SERVER ******
-Management tools are very useful in a developemnt environment :D'
-read -p "Install management tools (htop, vim) (y/N)?" mgmnt_tools
-if [[ mgmnt_tools == "" ]]; then
-	mgmnt_tools="n"; fi
+echo -e '***** Management tools are very useful in a developemnt environment :D *****'
+read -p "Install management tools (coreutils, epel-release htop iotop hdparm bonnie++ curl) (y/N)?" mgmnt_tools
+
+## not needed ##
+#if [[ mgmnt_tools == "" ]]; then
+#	mgmnt_tools="n"; fi
 
 ## while not right answer, keep loop
 while [[ $mgmnt_tools != "" ]] && [[ ${mgmnt_tools,,} != "y" ]] && [[ ${mgmnt_tools,,} != "n" ]]; do
@@ -25,22 +34,20 @@ if [[ ${mgmnt_tools,,} == "y" ]]; then
 	echo "The management tools are being installed ..."
 	yum install -y coreutils
 	yum install -y epel-release
-	yum install -y htop iotop hdparm bonnie++ docker-compose git curl
+	yum install -y htop iotop hdparm bonnie++ curl
 
+fi
 
-	# Set debug mode for docker daemon
-	cat > /etc/docker/daemon.json << EOF
+# Set debug mode for docker daemon
+cat > /etc/docker/daemon.json << EOF
 {
 "debug": true
 }
 EOF
-fi
-
-
 
 ########## CONFIG PROXY ##########
 # Set docker to work under proxy
-read -p "Would you like to configure docker to work under proxy? (y/N):" set_proxy
+read -p "Would you like to configure docker to work under a proxy perimeter? (y/N): " set_proxy
 
 while [[ $set_proxy != "" ]] && [[ ${set_proxy,,} != "y" ]] && [[ ${set_proxy,,} != "n" ]]
 do
